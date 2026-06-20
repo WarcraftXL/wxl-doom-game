@@ -6,6 +6,7 @@
 #include "DoomBridge.h"
 
 #include "core/Logger.hpp"
+#include "game/sound/Sound.hpp"
 
 #include <windows.h>
 #include <cstdint>
@@ -14,8 +15,9 @@
 
 namespace wxl::scripts::doom
 {
-    namespace gx = wxl::game::gx;
-    namespace ev = wxl::events;
+    namespace gx  = wxl::game::gx;
+    namespace ev  = wxl::events;
+    namespace snd = wxl::game::sound;
 
     namespace
     {
@@ -152,6 +154,7 @@ namespace wxl::scripts::doom
             if (wad.empty())
             {
                 WLOG_INFO("[doom] no IWAD next to Wow.exe. Drop doom1.wad or freedoom1.wad there, then press F8 again.");
+                snd::SetMasterVolume(savedVol_);
                 active_ = false;
                 return;
             }
@@ -198,7 +201,9 @@ namespace wxl::scripts::doom
             if (down && !(a.lparam & (1 << 30)))
             {
                 active_ = !active_;
-                WLOG_INFO("[doom] %s", active_ ? "on" : "off");
+                if (active_) { savedVol_ = snd::MasterVolume(); snd::SetMasterVolume(0.0f); }
+                else         { snd::SetMasterVolume(savedVol_); }
+                WLOG_INFO("[doom] %s (client vol %.2f)", active_ ? "on" : "off", savedVol_);
             }
             if (a.handled) *a.handled = true;
             return;

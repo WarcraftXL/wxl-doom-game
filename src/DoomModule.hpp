@@ -31,6 +31,7 @@ namespace wxl::scripts::doom
         void Blit(wxl::game::gx::Device9 dev);
 
         bool  active_ = false;
+        float savedVol_ = 1.0f; // client master volume captured before muting
         void* tex_ = nullptr; // IDirect3DTexture9*
         void* ps_  = nullptr; // passthrough pixel shader
         int   texW_ = 0;

@@ -16,14 +16,18 @@ file(GLOB _doom_src CONFIGURE_DEPENDS "${_dg}/*.c")
 list(FILTER _doom_src EXCLUDE REGEX
     "/(doomgeneric_(allegro|emscripten|linuxvt|sdl|soso|sosox|win|xlib)|i_sdlsound|i_sdlmusic|i_allegrosound|i_allegromusic|mus2mid)\\.c$")
 
-add_library(wxl_doom STATIC ${_doom_src} "${CMAKE_CURRENT_LIST_DIR}/bridge/DoomBridge.c")
-target_include_directories(wxl_doom PRIVATE "${_dg}")
-target_compile_definitions(wxl_doom PRIVATE WIN32 NDEBUG _CONSOLE _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
+add_library(wxl_doom STATIC
+    ${_doom_src}
+    "${CMAKE_CURRENT_LIST_DIR}/bridge/DoomBridge.c"
+    "${CMAKE_CURRENT_LIST_DIR}/bridge/DoomSound.c")
+target_include_directories(wxl_doom PRIVATE "${_dg}" "${CMAKE_CURRENT_LIST_DIR}/bridge/shim")
+# FEATURE_SOUND wires Doom's SFX path to DG_sound_module (bridge/DoomSound.c -> the waveOut mixer).
+target_compile_definitions(wxl_doom PRIVATE WIN32 NDEBUG _CONSOLE FEATURE_SOUND _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
 if(MSVC)
     target_compile_options(wxl_doom PRIVATE /w) # vendored C: silence its own warnings
 endif()
 
-target_link_libraries(WarcraftXL PRIVATE wxl_doom)
+target_link_libraries(WarcraftXL PRIVATE wxl_doom winmm) # winmm: waveOut for the Doom mixer
 target_include_directories(WarcraftXL PRIVATE "${CMAKE_CURRENT_LIST_DIR}/bridge")
 
 message(STATUS "wxl-doom-game: doomgeneric linked into WarcraftXL")

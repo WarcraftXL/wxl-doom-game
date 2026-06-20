@@ -49,7 +49,8 @@ While Doom is active it owns the keyboard, so the client does not also react to 
 
 ## Notes
 
-- No sound. The engine is built without an audio backend.
+- Sound: Doom's SFX play through a small built-in waveOut mixer. Entering Doom mutes the client's own
+  audio (its master volume is set to 0) and restores it on exit. No Doom music.
 - The framebuffer is 640x400, point-sampled to the client resolution (so it fills the screen, it is not
   a 640x400 window).
 - Quitting Doom from its own menu, or a missing/invalid IWAD, can close the client (Doom exits the
