@@ -2,7 +2,7 @@
 // Copyright (C) 2026 WarcraftXL. GPLv3.
 //
 // Built only when FEATURE_SOUND is defined. Reads each SFX lump from the WAD (DMX 8-bit PCM), and hands
-// the samples to the C++ mixer in src/DoomAudio.cpp. Music is a silent stub.
+// the samples to the C++ mixer in src/DoomAudio.cpp. Music is handled by bridge/DoomMusic.c.
 
 #include <stdio.h>
 
@@ -85,25 +85,4 @@ sound_module_t DG_sound_module =
     s_sfxDevices, sizeof(s_sfxDevices) / sizeof(s_sfxDevices[0]),
     SFX_Init, SFX_Shutdown, SFX_GetLumpNum, SFX_Update,
     SFX_UpdateParams, SFX_Start, SFX_Stop, SFX_IsPlaying, SFX_Cache
-};
-
-// Silent music module: satisfies the dispatcher, produces no music.
-static snddevice_t s_musDevices[] = { SNDDEVICE_GENMIDI };
-static boolean MUS_Init(void) { return true; }
-static void    MUS_Shutdown(void) {}
-static void    MUS_SetVolume(int v) { (void)v; }
-static void    MUS_Pause(void) {}
-static void    MUS_Resume(void) {}
-static void*   MUS_Register(void* d, int l) { (void)d; (void)l; return 0; }
-static void    MUS_Unregister(void* h) { (void)h; }
-static void    MUS_Play(void* h, boolean loop) { (void)h; (void)loop; }
-static void    MUS_Stop(void) {}
-static boolean MUS_IsPlaying(void) { return false; }
-static void    MUS_Poll(void) {}
-
-music_module_t DG_music_module =
-{
-    s_musDevices, sizeof(s_musDevices) / sizeof(s_musDevices[0]),
-    MUS_Init, MUS_Shutdown, MUS_SetVolume, MUS_Pause, MUS_Resume,
-    MUS_Register, MUS_Unregister, MUS_Play, MUS_Stop, MUS_IsPlaying, MUS_Poll
 };

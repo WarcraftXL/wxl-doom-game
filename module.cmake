@@ -14,12 +14,13 @@ file(GLOB _doom_src CONFIGURE_DEPENDS "${_dg}/*.c")
 # Drop every platform main (each defines its own main + DG_* callbacks) and the SDL/Allegro audio backends.
 # What remains is the engine core, exactly the set the project's Windows build compiles.
 list(FILTER _doom_src EXCLUDE REGEX
-    "/(doomgeneric_(allegro|emscripten|linuxvt|sdl|soso|sosox|win|xlib)|i_sdlsound|i_sdlmusic|i_allegrosound|i_allegromusic|mus2mid)\\.c$")
+    "/(doomgeneric_(allegro|emscripten|linuxvt|sdl|soso|sosox|win|xlib)|i_sdlsound|i_sdlmusic|i_allegrosound|i_allegromusic)\\.c$")
 
 add_library(wxl_doom STATIC
     ${_doom_src}
     "${CMAKE_CURRENT_LIST_DIR}/bridge/DoomBridge.c"
-    "${CMAKE_CURRENT_LIST_DIR}/bridge/DoomSound.c")
+    "${CMAKE_CURRENT_LIST_DIR}/bridge/DoomSound.c"
+    "${CMAKE_CURRENT_LIST_DIR}/bridge/DoomMusic.c")
 target_include_directories(wxl_doom PRIVATE "${_dg}" "${CMAKE_CURRENT_LIST_DIR}/bridge/shim")
 # FEATURE_SOUND wires Doom's SFX path to DG_sound_module (bridge/DoomSound.c -> the waveOut mixer).
 target_compile_definitions(wxl_doom PRIVATE WIN32 NDEBUG _CONSOLE FEATURE_SOUND _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_DEPRECATE)
